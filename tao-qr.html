@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tạo mã QR đăng ký</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Be Vietnam Pro', sans-serif; background: #f4f6fb; padding: 24px 16px; }
+  .card { max-width: 460px; margin: 0 auto 16px; background: #fff; border-radius: 16px; padding: 28px; border: 1px solid #e2e6ef; }
+  h1 { font-size: 20px; color: #1a1a2e; margin-bottom: 4px; }
+  .sub { font-size: 13px; color: #9aa0b8; margin-bottom: 20px; }
+  label { display: block; font-size: 12px; font-weight: 600; color: #7a84a0; margin-bottom: 5px; }
+  input { width: 100%; padding: 11px 12px; border: 1px solid #e2e6ef; border-radius: 8px; font-family: inherit; font-size: 14px; outline: none; margin-bottom: 14px; }
+  input:focus { border-color: #e53935; }
+  .btn { width: 100%; padding: 13px; border: none; border-radius: 8px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; background: #e53935; color: #fff; }
+  .btn:hover { background: #c62828; }
+  .btn-ghost { background: #f8f9fc; color: #5a6080; border: 1px solid #e2e6ef; margin-top: 8px; }
+
+  /* poster in ra dan o quay */
+  .poster { max-width: 460px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 36px 28px; border: 1px solid #e2e6ef; text-align: center; }
+  .poster .brand { font-size: 13px; font-weight: 700; color: #e53935; letter-spacing: 1px; margin-bottom: 20px; }
+  .poster h2 { font-size: 26px; color: #1a1a2e; line-height: 1.25; margin-bottom: 8px; }
+  .poster p { font-size: 14px; color: #7a84a0; margin-bottom: 24px; }
+  #qrbox { display: inline-block; padding: 16px; border: 2px solid #1a1a2e; border-radius: 12px; }
+  #qrbox img, #qrbox canvas { display: block; }
+  .howto { text-align: left; margin-top: 26px; font-size: 13px; color: #5a6080; line-height: 1.7; }
+  .howto b { color: #1a1a2e; }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .card { display: none; }
+    .poster { border: none; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>Tạo mã QR đăng ký</h1>
+  <div class="sub">Dán link trang đăng ký vào đây, rồi in mã QR ra treo ở quầy.</div>
+
+  <label>Link trang đăng ký</label>
+  <input type="url" id="url" value="https://dinhphongluu-fitness.vn/dangky.html">
+
+  <label>Tên phòng tập hiển thị trên poster</label>
+  <input type="text" id="brand" value="ĐINH PHONG LƯU FITNESS">
+
+  <button class="btn" onclick="makeQR()">Tạo mã QR</button>
+  <button class="btn btn-ghost" onclick="window.print()">In poster</button>
+  <button class="btn btn-ghost" onclick="downloadQR()">Tải mã QR (PNG)</button>
+</div>
+
+<div class="poster">
+  <div class="brand" id="brandOut">ĐINH PHONG LƯU FITNESS</div>
+  <h2>Đăng ký gói tập</h2>
+  <p>Quét mã bằng camera điện thoại</p>
+  <div id="qrbox"></div>
+  <div class="howto">
+    <b>Cách quét:</b><br>
+    1. Mở ứng dụng Camera trên điện thoại<br>
+    2. Hướng camera vào mã QR, đợi hiện link<br>
+    3. Bấm vào link, điền thông tin và chụp ảnh khuôn mặt<br>
+    4. Thanh toán qua MoMo là xong
+  </div>
+</div>
+
+<script>
+let qr = null;
+
+function makeQR() {
+  const url = document.getElementById('url').value.trim();
+  if (!url) return alert('Chưa nhập link trang đăng ký.');
+
+  document.getElementById('brandOut').textContent = document.getElementById('brand').value.trim();
+
+  const box = document.getElementById('qrbox');
+  box.innerHTML = '';
+  qr = new QRCode(box, {
+    text: url,
+    width: 260,
+    height: 260,
+    colorDark: '#1a1a2e',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H   // muc sua loi cao, van quet duoc khi in mo hoac xuoc
+  });
+}
+
+function downloadQR() {
+  const canvas = document.querySelector('#qrbox canvas');
+  if (!canvas) return alert('Bấm "Tạo mã QR" trước đã.');
+  const a = document.createElement('a');
+  a.download = 'qr-dang-ky.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+makeQR();
+</script>
+
+</body>
+</html>
